@@ -25,12 +25,29 @@ namespace TMISolver
 	    return new Vector2D(dx, dy);
 	}
 
-	public static Vector3D Distance(Point3D p1, Point3D p2)
+	public static Vector3D Distance(Point p1, Point p2)
 	{
 	    var dx = p1.vec.x - p2.vec.x;
 	    var dy = p1.vec.y - p2.vec.y;
 	    var dz = p1.vec.z - p2.vec.z;
 	    return new Vector3D(dx, dy, dz);
+	}
+	public static MathObject CrossProduct(Vector2D a, Vector2D b)
+	{
+	    return a.x * b.y - a.y * b.x;
+	}
+	public static MathObject CrossProduct(Vector a, Vector b, int i)
+	{
+	    switch (i) {
+		case 0:
+		    return a.y * b.z - a.z * b.y;
+		case 1:
+		    return a.z * b.x - a.x * b.z;
+		case 2:
+		    return a.x * b.y - a.y * b.x;
+		default:
+		    throw new Exception("Index out of bounds");
+	    }
 	}
     }
     public abstract class Vector
@@ -51,7 +68,7 @@ namespace TMISolver
 	}
 	public override void Print()
 	{
-	    Console.WriteLine(this.x + " " + this.y);
+	    Console.WriteLine(this.x + " , " + this.y);
 	}
 	public static MathObject CrossProduct(Vector2D a, Vector2D b)
 	{
@@ -70,23 +87,10 @@ namespace TMISolver
 	public override void Print()
 	{
 	    Console.WriteLine(this.x
-			      + " " +
+			      + " , " +
 			      this.y
-			      + " " +
+			      + " , " +
 			      this.z);
-	}
-	public static MathObject CrossProduct(Vector3D a, Vector3D b, int i)
-	{
-	    switch (i) {
-		case 0:
-		    return a.y * b.z - a.z * b.y;
-		case 1:
-		    return a.z * b.x - a.x * b.z;
-		case 2:
-		    return a.x * b.y - a.y * b.x;
-		default:
-		    throw new Exception("Index out of bounds");
-	    }
 	}
     }
     public abstract class Point
@@ -144,7 +148,9 @@ namespace TMISolver
 	public Vector vec;
 	public void Print()
 	{
+	    Console.WriteLine("Postion:");
 	    this.position.Print();
+	    Console.WriteLine("Force:");
 	    this.vec.Print();
 	}
 	public abstract MathObject Index(int i);
@@ -207,6 +213,7 @@ namespace TMISolver
 	public Vector vec;
 	public void Print()
 	{
+	    Console.WriteLine("Moment:");
 	    this.vec.Print();
 	}
 	public abstract MathObject Index(int i);
@@ -266,21 +273,8 @@ namespace TMISolver
 	    return Balance;
 	    
 	}
-	static Equation AssembleMomentEquation(Point2D Reference, Force2D[] Forces, Moment2D[] Moments)
-	{
-	    var Balance = new Equation(0,0);
-	    foreach (var Moment in Moments)
-	    {
-		Balance.a = Balance.a + Moment.Index(2);
-	    }
-	    foreach (var Force in Forces)
-	    {
-		var distance = Extensions.Distance((Point2D) Force.position, (Point2D) Reference);
-		Balance.a = Balance.a - Vector2D.CrossProduct((Vector2D) Force.vec, distance);
-	    }
-	    return Balance;
-	}
-	static Equation AssembleMomentEquation(int index, Point3D Reference, Force3D[] Forces, Moment3D[] Moments)
+
+	static Equation AssembleMomentEquation(int index, Point Reference, Force[] Forces, Moment[] Moments)
 	{
 	    var Balance = new Equation(0,0);
 	    foreach (var Moment in Moments)
@@ -289,52 +283,25 @@ namespace TMISolver
 	    }
 	    foreach (var Force in Forces)
 	    {
-		var distance = Extensions.Distance((Point3D) Force.position, (Point3D) Reference);
-		Balance.a = Balance.a - Vector3D.CrossProduct((Vector3D) Force.vec, distance, index);
+		var distance = Extensions.Distance( Force.position, Reference);
+		Balance.a = Balance.a - Extensions.CrossProduct(Force.vec, distance, index);
 	    }
 	    return Balance;
 	}
-	// static Equation AssembleMomentEquation(int index, Point Reference, Force[] Forces, Moment[] Moments)
-	// {
-	//     var Balance = new Equation(0,0);
-	//     foreach (var Moment in Moments)
-	//     {
-	// 	Balance.a = Balance.a + Moment.Index(index);
-	//     }
-	//     foreach (var Force in Forces)
-	//     {
-	// 	var distance = Extensions.Distance((Point3D) Force.position, (Point3D) Reference);
-	// 	Balance.a = Balance.a - Vector3D.CrossProduct((Vector3D) Force.vec, distance, index);
-	//     }
-	//     return Balance;
-	// }
-
-    	// static And AssembleEquations(int dimensions, Point Reference, Force[] Forces, Moment[] Moments)
-    	// {
-	//     var Balance = new Equation[2*dimensions];
-	//     for (int i = 0; i < dimensions; ++i)
-	//     {
-	// 	Balance[i] = AssembleForceEquation(i, Forces);
-	// 	Balance[i+dimensions] = AssembleMomentEquation(i, Reference, Forces, Moments);
-	//     }
-	//     return new And(Balance);
-	// }
 
 	public static And AssembleEquations(Point2D Reference, Force2D[] Forces, Moment2D[] Moments)
 	{
-	    // return AssembleEquations(2, Reference, Forces, Moments);
 	    int dimensions = 2;
 	    var Balance = new Equation[dimensions+1];
 	    for (int i = 0; i < dimensions; ++i)
 	    {
 		Balance[i] = AssembleForceEquation(i, Forces);
 	    }
-	    Balance[2] = AssembleMomentEquation(Reference, Forces, Moments);
+	    Balance[2] = AssembleMomentEquation(2, Reference, Forces, Moments);
 	    return new And(Balance);
 	}
 	public static And AssembleEquations(Point3D Reference, Force3D[] Forces, Moment3D[] Moments)
 	{
-	    // return AssembleEquations(3, Reference, Forces, Moments);
 	    int dimensions = 3;
 	    var Balance = new Equation[2*dimensions];
 	    for (int i = 0; i < dimensions; ++i)
@@ -380,7 +347,11 @@ namespace TMISolver
     {
 	public static void Main()
 	{
-	    Tests.BalkenTest();
+	    // Tests.BalkenTest();
+	    var x1 = new Point2D(new Symbol("x"), new Symbol("y"));
+	    var x2 = new Point2D(new Symbol("a"), new Symbol("b"));
+	    var delta = Extensions.Distance(x1, x2);
+	    delta.Print();
 	}
     }
 }
