@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using System.Diagnosics;
+using System.Diagnostics;
 using Symbolism;
 
 namespace TMISolver{
@@ -9,13 +9,25 @@ namespace TMISolver{
 	Moment[] ReactionMoments;
 	Force[] ExternalForces;
 	Moment[] ExternalMoments;
-
+	// int Dimension;
+	Point Origin;
 	public ReactionForceExercise(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments) {
 	    // TODO assert all either 2d or 3d
 	    ReactionForces = _ReactionForces;
 	    ReactionMoments = _ReactionMoments;
 	    ExternalForces = _ExternalForces;
 	    ExternalMoments = _ExternalMoments;
+	    if (ReactionForces is Force2D[]){
+		// Dimension = 2;
+		var Origin = new Point2D(0,0);
+	    }
+	    else if (ReactionForces is Force3D[]){
+		// Dimension = 3;
+		var Origin = new Point3D(0,0,0);
+	    }
+	    else{
+		throw new Exception("Must be 2D or 3D");
+	    }
 	}
 
 	Equation AssembleForceEquation(int index)
@@ -72,13 +84,24 @@ namespace TMISolver{
 	    }
 	    return new And(Balance);
 	}
-	// TODO
-    // 	static MathObject SolveBalanceEquations(And BalanceEquations, Symbol[] Unknowns, Force[] ExternalForces, Moment[] ExternalMoments, Symbol WantedVariable)
-    // 	{
-    // 	    return
-    // 		BalanceEquations
-    // 	    	.EliminateVariables(Unknowns.Where(val => val != WantedVariable).ToArray())
-    // 	    	.IsolateVariable(WantedVariable);
-    // 	}
+    	// public MathObject[] SolveBalanceEquations()
+    	// {
+	//     var BalanceEquations = this.AssembleEquations(Origin);
+	//     MathObject[] Solution = new MathObject[0];
+	//     foreach (var ReactionForce in ReactionForces)
+	//     {
+	// 	var VariablesToEliminate = 
+	// 	Solution = Solution.Concat(
+	// 				   BalanceEquations
+	// 				   .EliminateVariables()
+	// 				   .IsolateVariable(ReactionForce)
+	// 				   );
+	//     }
+    	//     return
+    	// 	BalanceEquations
+    	//     	.EliminateVariables()
+    	//     	.IsolateVariable(WantedVariable)
+	// 	;
+    	// }
     }
 }
