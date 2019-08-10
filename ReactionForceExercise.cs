@@ -1,26 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using Symbolism;
+using Symbolism.IsolateVariable;
+using Symbolism.EliminateVariable;
 
 namespace TMISolver{
-    public class ReactionForceExercise{
-	Force[] ReactionForces;
-	Moment[] ReactionMoments;
-	Force[] ExternalForces;
-	Moment[] ExternalMoments;
+    public abstract class ReactionForceExercise{
+	protected Force[] ReactionForces;
+	protected Moment[] ReactionMoments;
+	protected Force[] ExternalForces;
+	protected Moment[] ExternalMoments;
+	protected Symbol[] AllUnknowns;
 	// int Dimension;
-	Point Origin;
-	public ReactionForceExercise(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments) {
-	    // TODO assert all either 2d or 3d
-	    ReactionForces = _ReactionForces;
-	    ReactionMoments = _ReactionMoments;
-	    ExternalForces = _ExternalForces;
-	    ExternalMoments = _ExternalMoments;
-	    var Origin = new Point(0,0,0);
-	}
 
-	Equation AssembleForceEquation(int index) {
+	protected Equation AssembleForceEquation(int index) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    var Balance = new Equation(0,0);
 	    foreach (var Force in Forces)
@@ -30,7 +25,7 @@ namespace TMISolver{
 	    return Balance;
 	}
 
-	Equation AssembleMomentEquation(int index, Point Reference) {
+	protected Equation AssembleMomentEquation(int index, Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    var Balance = new Equation(0,0);
@@ -45,8 +40,34 @@ namespace TMISolver{
 	    }
 	    return Balance;
 	}
-
-	public And AssembleEquations2D(Point Reference) {
+	public abstract And AssembleEquations(Point origin);
+    	public MathObject[] SolveBalanceEquations()
+    	{
+	    var Origin = new Point(0,0,0);
+	    var BalanceEquations = this.AssembleEquations(Origin);
+	    List<MathObject> Solution = new List<MathObject>();
+	    foreach (Symbol Unknown in this.AllUnknowns)
+	    {
+		Symbol[] VariablesToEliminate = Extensions.AllBut(AllUnknowns, Unknown);
+		Solution.Add(
+					   BalanceEquations
+					   .EliminateVariables(VariablesToEliminate)
+					   .IsolateVariable(Unknown)
+					   );
+	    }
+    	    return Solution.ToArray();
+    	}
+    }
+    public class ReactionForceExercise2D : ReactionForceExercise{
+	public ReactionForceExercise2D(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments, Symbol[] _AllUnknowns) {
+	    // TODO assert all either 2d or 3d
+	    ReactionForces = _ReactionForces;
+	    ReactionMoments = _ReactionMoments;
+	    ExternalForces = _ExternalForces;
+	    ExternalMoments = _ExternalMoments;
+	    AllUnknowns = _AllUnknowns;
+	}
+	public override And AssembleEquations(Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    int dimensions = 2;
@@ -58,7 +79,17 @@ namespace TMISolver{
 	    Balance[2] = this.AssembleMomentEquation(2, Reference);
 	    return new And(Balance);
 	}
-	public And AssembleEquations3D(Point Reference) {
+    }
+    public class ReactionForceExercise3D : ReactionForceExercise{
+	public ReactionForceExercise3D(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments, Symbol[] _AllUnknowns) {
+	    // TODO assert all either 2d or 3d
+	    ReactionForces = _ReactionForces;
+	    ReactionMoments = _ReactionMoments;
+	    ExternalForces = _ExternalForces;
+	    ExternalMoments = _ExternalMoments;
+	    AllUnknowns = _AllUnknowns;
+	}
+	public override And AssembleEquations(Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    int dimensions = 3;
@@ -70,24 +101,5 @@ namespace TMISolver{
 	    }
 	    return new And(Balance);
 	}
-    	// public MathObject[] SolveBalanceEquations()
-    	// {
-	//     var BalanceEquations = this.AssembleEquations(Origin);
-	//     MathObject[] Solution = new MathObject[0];
-	//     foreach (var ReactionForce in ReactionForces)
-	//     {
-	// 	var VariablesToEliminate = 
-	// 	Solution = Solution.Concat(
-	// 				   BalanceEquations
-	// 				   .EliminateVariables()
-	// 				   .IsolateVariable(ReactionForce)
-	// 				   );
-	//     }
-    	//     return
-    	// 	BalanceEquations
-    	//     	.EliminateVariables()
-    	//     	.IsolateVariable(WantedVariable)
-	// 	;
-    	// }
     }
 }

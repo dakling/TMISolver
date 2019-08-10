@@ -1,6 +1,8 @@
 using System;
 using Symbolism;
 
+using Symbolism.RationalizeExpression;
+
 namespace TMISolver{
     public class Tests
     {
@@ -29,14 +31,15 @@ namespace TMISolver{
 	    var ExternalForces = new Force[]{F};
 	    var ReactionMoments = new Moment[0];
 	    var ExternalMoments = new Moment[]{M};
-	    var BalkenExercise = new ReactionForceExercise(ReactionForces, ReactionMoments, ExternalForces, ExternalMoments);
-	    var Balances = BalkenExercise.AssembleEquations2D(A);
-	    // var testBalances = TMISolver.AssembleXEquation(testForces);
-	    // var Sol = Balances
-	    // 	.EliminateVariables(_Ay, _Ax)
-	    // 	.IsolateVariable(_By);
-	    // var Sol = TMISolver.SolveBalanceEquations(Balances, )
+	    var Unknowns = new Symbol[]{_Ax, _Ay, _By};
+	    var BalkenExercise = new ReactionForceExercise2D(ReactionForces, ReactionMoments, ExternalForces, ExternalMoments, Unknowns);
+	    var Balances = BalkenExercise.AssembleEquations(A);
+	    var Sol = BalkenExercise.SolveBalanceEquations();
 	    Console.WriteLine(Balances);
+	    foreach (var item in Sol)
+	    {
+		Console.WriteLine(item);
+	    }
 	}
     }
 }

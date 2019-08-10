@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Symbolism;
 
 namespace TMISolver {
@@ -20,6 +21,9 @@ namespace TMISolver {
 		default:
 		    throw new Exception("Index out of bounds");
 	    }
+	}
+	public static Symbol[] AllBut(Symbol[] Array, Symbol Element){
+	    return Array.Where(val => val != Element).ToArray();
 	}
     }
 }
