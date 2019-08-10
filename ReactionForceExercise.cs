@@ -17,21 +17,10 @@ namespace TMISolver{
 	    ReactionMoments = _ReactionMoments;
 	    ExternalForces = _ExternalForces;
 	    ExternalMoments = _ExternalMoments;
-	    if (ReactionForces is Force2D[]){
-		// Dimension = 2;
-		var Origin = new Point2D(0,0);
-	    }
-	    else if (ReactionForces is Force3D[]){
-		// Dimension = 3;
-		var Origin = new Point3D(0,0,0);
-	    }
-	    else{
-		throw new Exception("Must be 2D or 3D");
-	    }
+	    var Origin = new Point(0,0,0);
 	}
 
-	Equation AssembleForceEquation(int index)
-	{
+	Equation AssembleForceEquation(int index) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    var Balance = new Equation(0,0);
 	    foreach (var Force in Forces)
@@ -41,8 +30,7 @@ namespace TMISolver{
 	    return Balance;
 	}
 
-	Equation AssembleMomentEquation(int index, Point Reference)
-	{
+	Equation AssembleMomentEquation(int index, Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    var Balance = new Equation(0,0);
@@ -58,8 +46,7 @@ namespace TMISolver{
 	    return Balance;
 	}
 
-	public And AssembleEquations(Point2D Reference)
-	{
+	public And AssembleEquations2D(Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    int dimensions = 2;
@@ -71,8 +58,7 @@ namespace TMISolver{
 	    Balance[2] = this.AssembleMomentEquation(2, Reference);
 	    return new And(Balance);
 	}
-	public And AssembleEquations(Point3D Reference)
-	{
+	public And AssembleEquations3D(Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    int dimensions = 3;

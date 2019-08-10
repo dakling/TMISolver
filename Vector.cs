@@ -2,47 +2,48 @@ using System;
 using Symbolism;
 
 namespace TMISolver{
-    public abstract class Vector
+    public class Vector
     {
-	public MathObject x;
-	public MathObject y;
-	public MathObject z;
-	public abstract void Print();
-    }
-
-    public class Vector2D : Vector
-    {
-	public Vector2D(MathObject _x, MathObject _y)
+	public MathObject[] vec;
+	public Vector(MathObject _x, MathObject _y)
 	{
-	    x = _x;
-	    y = _y;
-	    z = new Symbol("0");
+	    vec = new MathObject[]{_x, _y, 0};
 	}
-	public override void Print()
+	public Vector(MathObject _x, MathObject _y, MathObject _z)
 	{
-	    Console.WriteLine(this.x + " , " + this.y);
+	    vec = new MathObject[]{_x, _y, _z};
 	}
-	public static MathObject CrossProduct(Vector2D a, Vector2D b)
-	{
-	    return a.x * b.y - a.y * b.x;
+	public MathObject x(){
+	    return this.vec[0];
 	}
-    }
-
-    public class Vector3D : Vector
-    {
-	public Vector3D(MathObject _x, MathObject _y, MathObject _z)
-	{
-	    x = _x;
-	    y = _y;
-	    z = _z;
+	public MathObject y(){
+	    return this.vec[1];
 	}
-	public override void Print()
+	public MathObject z(){
+	    return this.vec[2];
+	}
+	public MathObject Index(int index){
+	    switch (index) {
+		case 0: {
+		    return this.x();
+		}
+		case 1: {
+		    return this.y();
+		}
+		case 2: {
+		    return this.z();
+		}
+		default:
+		  throw new Exception("Index out of bounds!");
+	    }
+	}
+	public void Print()
 	{
-	    Console.WriteLine(this.x
+	    Console.WriteLine(this.x()
 			      + " , " +
-			      this.y
+			      this.y()
 			      + " , " +
-			      this.z);
+			      this.z());
 	}
     }
 }

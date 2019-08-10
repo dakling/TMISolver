@@ -14,23 +14,23 @@ namespace TMISolver{
 	    var _By = new Symbol("By");
 	    var _M = new Symbol("M");
 	    // relevante Punkte
-	    var A = new Point2D(0, 0);
-	    var B = new Point2D(a, 0);
-	    var C = new Point2D(a/2, 0);
+	    var A = new Point(0, 0);
+	    var B = new Point(a, 0);
+	    var C = new Point(a/2, 0);
 	    // Lagerreaktionen
-	    var Ax = new Force2D(A, _Ax, 0);
-	    var Ay = new Force2D(A, 0, _Ay);
-	    var By = new Force2D(B, 0, _By);
+	    var Ax = new Force(A, _Ax, 0);
+	    var Ay = new Force(A, 0, _Ay);
+	    var By = new Force(B, 0, _By);
 	    // Externe Kräfte und Momente
-	    var F = new Force2D(C, 0, -_F);
-	    var M = new Moment2D(-_F*a);
+	    var F = new Force(C, 0, -_F);
+	    var M = new Moment(-_F*a);
 	    
-	    var ReactionForces = new Force2D[]{Ax, Ay, By};
-	    var ExternalForces = new Force2D[]{F};
-	    var ReactionMoments = new Moment2D[0];
-	    var ExternalMoments = new Moment2D[]{M};
+	    var ReactionForces = new Force[]{Ax, Ay, By};
+	    var ExternalForces = new Force[]{F};
+	    var ReactionMoments = new Moment[0];
+	    var ExternalMoments = new Moment[]{M};
 	    var BalkenExercise = new ReactionForceExercise(ReactionForces, ReactionMoments, ExternalForces, ExternalMoments);
-	    var Balances = BalkenExercise.AssembleEquations(A);
+	    var Balances = BalkenExercise.AssembleEquations2D(A);
 	    // var testBalances = TMISolver.AssembleXEquation(testForces);
 	    // var Sol = Balances
 	    // 	.EliminateVariables(_Ay, _Ax)
