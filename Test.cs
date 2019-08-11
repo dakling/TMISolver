@@ -37,7 +37,7 @@ namespace TMISolver{
 	    Console.WriteLine(Balances);
 	    foreach (var item in Sol)
 	    {
-		Console.WriteLine(item);
+	    	Console.WriteLine(item);
 	    }
 	}
 	// public static void GelenkBalkenSystem(){
