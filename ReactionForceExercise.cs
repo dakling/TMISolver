@@ -42,7 +42,7 @@ namespace TMISolver{
 	    AllUnknowns = _AllUnknowns;
 	}
 	public ReactionForceExercise2D(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments, Symbol[] _AllUnknowns) {
-	    Subsystems = new Subsystem2D[]{new Subsystem2D (_ReactionForces, _ReactionMoments, _ExternalForces, _ExternalMoments, _AllUnknowns)};
+	    Subsystems = new Subsystem2D[]{new Subsystem2D (_ReactionForces, _ReactionMoments, _ExternalForces, _ExternalMoments)};
 	    AllUnknowns = _AllUnknowns;
 	}
     }
@@ -52,7 +52,7 @@ namespace TMISolver{
 	    AllUnknowns = _AllUnknowns;
 	}
 	public ReactionForceExercise3D(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments, Symbol[] _AllUnknowns) {
-	    Subsystems = new Subsystem3D[]{new Subsystem3D (_ReactionForces, _ReactionMoments, _ExternalForces, _ExternalMoments, _AllUnknowns)};
+	    Subsystems = new Subsystem3D[]{new Subsystem3D (_ReactionForces, _ReactionMoments, _ExternalForces, _ExternalMoments)};
 	    AllUnknowns = _AllUnknowns;
 	}
     }
