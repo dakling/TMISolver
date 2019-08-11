@@ -3,10 +3,10 @@ using Symbolism;
 
 using Symbolism.RationalizeExpression;
 
-namespace TMISolver{
-    public class Tests
-    {
+namespace TMISolver {
+    public class Tests {
 	public static void BalkenTest() {
+	    Console.WriteLine("Normaler Balken");
 	    // introduce Symbols
 	    var a = new Symbol("a");
 	    var F = new Symbol("F");
@@ -34,44 +34,73 @@ namespace TMISolver{
 	    var Balances = BalkenExercise.AssembleEquations(A);
 	    var Sol = BalkenExercise.SolveBalanceEquations();
 	    Console.WriteLine(Balances);
-	    foreach (var item in Sol)
-	    {
+	    foreach (var item in Sol) {
 	    	Console.WriteLine(item);
 	    }
 	}
-	// public static void GelenkBalkenSystem(){
-	//     // introduce Symbols
-	//     var a = new Symbol("a");
-	//     var F = new Symbol("F");
-	//     var Ax = new Symbol("Ax");
-	//     var Ay = new Symbol("Ay");
-	//     var Ma = new Symbol("Ma");
-	//     var By = new Symbol("By");
-	//     var Gx = new Symbol("Gx");
-	//     var Gy = new Symbol("Gy");
-	//     var M = new Symbol("M");
-	//     // relevante Punkte
-	//     var A = new Point(0, 0);
-	//     var B = new Point(a, 0);
-	//     var C = new Point(a/2, 0);
-	//     var D = new Point(3*a/4, 0);
-	//     // Lagerreaktionen
-	//     var F_A = new Force(A, _Ax, _Ay);
-	//     var Ma = new Moment(_Ma);
-	//     var Gx = new Force(C, _Gx, 0);
-	//     var Gy = new Force(C, 0, _Gy);
-	//     var By = new Force(B, 0, _By);
-	//     // Externe Kräfte und Momente
-	//     var F = new Force(D, 0, -_F);
+	public static void GelenkBalkenSystem(){
+	    Console.WriteLine("Balken mit Gelenk");
+	    // introduce Symbols
+	    var a = new Symbol("a");
+	    var F = new Symbol("F");
+	    var Ax = new Symbol("Ax");
+	    var Ay = new Symbol("Ay");
+	    var Ma = new Symbol("Ma");
+	    var By = new Symbol("By");
+	    var Gx = new Symbol("Gx");
+	    var Gy = new Symbol("Gy");
+	    var M = new Symbol("M");
+	    // relevante Punkte
+	    var A = new Point(0, 0);
+	    var B = new Point(a, 0);
+	    var C = new Point(a/2, 0);
+	    var D = new Point(3*a/4, 0);
+	    // Lagerreaktionen
+	    var F_A = new Force(A, Ax, Ay);
+	    var M_A = new Moment(Ma);
+	    var F_G = new Force(C, Gx, Gy);
+	    var F_B = new Force(B, 0, By);
+	    // Externe Kräfte und Momente
+	    var F_Ext = new Force(D, 0, -F);
 	    
-	//     // Gesamtsystem
-	//     var ReactionForcesFull = new Force[]{Ax, Ay, By};
-	//     var ExternalForcesFull= new Force[]{F};
-	//     var ReactionMomentsFull= new Moment[]{Ma};
-	//     var ExternalMomentsFull= new Moment[0];
-	//     var FullSystem = new Subsystem2D(ReactionForcesFull, ReactionMomentsFull, ExternalForcesFull, ExternalMomentsFull)
+	    // Gesamtsystem
+	    var ReactionForcesFull = new Force[]{F_A, F_B};
+	    var ExternalForcesFull= new Force[]{F_Ext};
+	    var ReactionMomentsFull= new Moment[]{M_A};
+	    var ExternalMomentsFull= new Moment[0];
+	    var FullSystem = new Subsystem2D(ReactionForcesFull, ReactionMomentsFull, ExternalForcesFull, ExternalMomentsFull);
 
-	//     var Unknowns = new Symbol[]{_Ax, _Ay, _Ma, _By, _Gx, _Gy};
-	// }
+	    var BalanceEquationsFull = (FullSystem.AssembleEquations(A));
+	    Console.WriteLine("Gesamtsystem");
+	    foreach (var item in BalanceEquationsFull)
+	    {
+		var eq = new And(item);
+		Console.WriteLine(eq);
+	    }
+	    // Right Subsystem
+	    var ReactionForcesRight = new Force[]{F_G, F_B};
+	    var ExternalForcesRight = new Force[]{F_Ext};
+	    var ReactionMomentsRight= new Moment[0];
+	    var ExternalMomentsRight= new Moment[0];
+	    var RightSystem = new Subsystem2D(ReactionForcesRight, ReactionMomentsRight, ExternalForcesRight, ExternalMomentsRight);
+	    Console.WriteLine("Rechtes Teilsystem");
+	    var BalanceEquationsRight = (RightSystem.AssembleEquations(C));
+	    foreach (var item in BalanceEquationsRight)
+	    {
+		var eq = new And(item);
+		Console.WriteLine(eq);
+	    }
+
+	    // Everything together
+	    var Unknowns = new Symbol[]{Ax, Ay, Ma, By, Gx, Gy};
+	    var Exercise = new ReactionForceExercise2D(new Subsystem2D[]{FullSystem, RightSystem}, Unknowns);
+
+	    Console.WriteLine("Alles zusammen");
+	    Console.WriteLine(Exercise.AssembleEquations(A));
+	    var Sol = Exercise.SolveBalanceEquations();
+	    foreach (var item in Sol) {
+		Console.WriteLine(item);
+	    }
+	}
     }
 }

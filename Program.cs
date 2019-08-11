@@ -21,6 +21,7 @@ namespace TMISolver
 	public static void Main()
 	{
 	    Tests.BalkenTest();
+	    Tests.GelenkBalkenSystem();
 	}
     }
 }

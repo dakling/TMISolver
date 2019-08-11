@@ -11,7 +11,6 @@ namespace TMISolver{
 	protected Symbol[] AllUnknowns;
 	public Subsystem[] Subsystems;
 	public And AssembleEquations(Point Reference) {
-	    // List<And> BalanceEquations = new List<And>();
 	    List<Equation> BalanceEquations = new List<Equation>();
 	    foreach (var Subsystem in this.Subsystems)
 	    {
