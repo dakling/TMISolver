@@ -1,2 +1,3 @@
 * Description
-README is work in progress - please refer to source code for now.
+This package is intended to solve simple exercises of mechanics.
+Please refer to the tests for Examples on how to use this.

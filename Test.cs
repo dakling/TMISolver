@@ -7,21 +7,21 @@ namespace TMISolver {
     public class Tests {
 	public static void BalkenTest() {
 	    Console.WriteLine("Normaler Balken");
-	    // introduce Symbols
+	    // introduce symbols
 	    var a = new Symbol("a");
 	    var F = new Symbol("F");
-	    var Ax = new Symbol("Ax");
-	    var Ay = new Symbol("Ay");
-	    var By = new Symbol("By");
+	    var Ax = new Symbol("A_x");
+	    var Ay = new Symbol("A_y");
+	    var By = new Symbol("B_y");
 	    var M = new Symbol("M");
-	    // relevante Punkte
+	    // relevant points
 	    var A = new Point(0, 0);
 	    var B = new Point(a, 0);
 	    var C = new Point(a/2, 0);
-	    // Lagerreaktionen
+	    // support reactions
 	    var F_A = new Force(A, Ax, Ay);
 	    var F_B = new Force(B, 0, By);
-	    // Externe Kräfte und Momente
+	    // external forces and moments
 	    var F_Ext = new Force(C, 0, -F);
 	    var M_Ext = new Moment(-F*a);
 	    
@@ -37,31 +37,31 @@ namespace TMISolver {
 	    BalkenExercise.PrintSolution();
 	}
 	public static void GelenkBalkenSystem(){
-	    Console.WriteLine("Balken mit Gelenk");
+	    Console.WriteLine("Beam with hinge");
 	    // introduce Symbols
 	    var a = new Symbol("a");
 	    var F = new Symbol("F");
-	    var Ax = new Symbol("Ax");
-	    var Ay = new Symbol("Ay");
-	    var Ma = new Symbol("Ma");
-	    var By = new Symbol("By");
-	    var Gx = new Symbol("Gx");
-	    var Gy = new Symbol("Gy");
+	    var Ax = new Symbol("A_x");
+	    var Ay = new Symbol("A_y");
+	    var Ma = new Symbol("M_a");
+	    var By = new Symbol("B_y");
+	    var Gx = new Symbol("G_x");
+	    var Gy = new Symbol("G_y");
 	    var M = new Symbol("M");
-	    // relevante Punkte
+	    // relevant points
 	    var A = new Point(0, 0);
 	    var B = new Point(a, 0);
 	    var C = new Point(a/2, 0);
 	    var D = new Point(3*a/4, 0);
-	    // Lagerreaktionen
+	    // support reactions
 	    var F_A = new Force(A, Ax, Ay);
 	    var M_A = new Moment(Ma);
 	    var F_G = new Force(C, Gx, Gy);
 	    var F_B = new Force(B, 0, By);
-	    // Externe Kräfte und Momente
+	    // external forces and moments
 	    var F_Ext = new Force(D, 0, -F);
 	    
-	    // Gesamtsystem
+	    // full system
 	    var ReactionForcesFull = new Force[]{F_A, F_B};
 	    var ExternalForcesFull= new Force[]{F_Ext};
 	    var ReactionMomentsFull= new Moment[]{M_A};
@@ -70,8 +70,10 @@ namespace TMISolver {
 
 	    var BalanceEquationsFull = (FullSystem.AssembleEquations(A));
 	    Console.WriteLine("Gesamtsystem");
+	    FullSystem.PrintEquations(A);
+	    Console.WriteLine("Using Latex output:");
 	    FullSystem.PrintEquationsLatex(A);
-	    // Right Subsystem
+	    // right Subsystem
 	    var ReactionForcesRight = new Force[]{F_G, F_B};
 	    var ExternalForcesRight = new Force[]{F_Ext};
 	    var ReactionMomentsRight= new Moment[0];
@@ -81,11 +83,11 @@ namespace TMISolver {
 	    var BalanceEquationsRight = (RightSystem.AssembleEquations(C));
 	    RightSystem.PrintEquations(C);
 
-	    // Everything together
+	    // everything together
 	    var Unknowns = new Symbol[]{Ax, Ay, Ma, By, Gx, Gy};
 	    var Exercise = new ReactionForceExercise2D(new Subsystem2D[]{FullSystem, RightSystem}, Unknowns);
 
-	    Console.WriteLine("Alles zusammen");
+	    Console.WriteLine("Everything together to calculate solution:");
 	    var Sol = Exercise.SolveBalanceEquations();
 	    Exercise.PrintSolution();
 	}
