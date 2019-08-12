@@ -39,7 +39,23 @@ namespace TMISolver{
 	    }
 	    return Balance;
 	}
-	public abstract List<Equation> AssembleEquations(Point origin);
+	public abstract Equation[] AssembleEquations(Point origin);
+	public void PrintEquations(Point Reference){
+	    var Equations = this.AssembleEquations(Reference);
+	    Extensions.PrintArray(Equations);
+	}
+	public void PrintEquationsLatex(Point Reference){
+	    var Equations = this.AssembleEquations(Reference);
+	    Console.WriteLine("\\(");
+	    foreach (var Equation in Equations)
+	    {
+		Console.Write(Equation.a);
+		Console.Write(" = ");
+		Console.Write(Equation.b);
+		Console.Write("\\\\ \n");
+	    }
+	    Console.WriteLine("\\)");
+	}
     }
     public class Subsystem2D : Subsystem{
 	public Subsystem2D(Force[] _ReactionForces, Moment[] _ReactionMoments, Force[] _ExternalForces, Moment[] _ExternalMoments) {
@@ -48,7 +64,7 @@ namespace TMISolver{
 	    ExternalForces = _ExternalForces;
 	    ExternalMoments = _ExternalMoments;
 	}
-	public override List<Equation> AssembleEquations(Point Reference) {
+	public override Equation[] AssembleEquations(Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    int dimensions = 2;
@@ -58,7 +74,7 @@ namespace TMISolver{
 		Balance[i] = this.AssembleForceEquation(i);
 	    }
 	    Balance[2] = this.AssembleMomentEquation(2, Reference);
-	    return Balance.ToList();
+	    return Balance;
 	}
     }
     public class Subsystem3D : Subsystem{
@@ -68,7 +84,7 @@ namespace TMISolver{
 	    ExternalForces = _ExternalForces;
 	    ExternalMoments = _ExternalMoments;
 	}
-	public override List<Equation> AssembleEquations(Point Reference) {
+	public override Equation[] AssembleEquations(Point Reference) {
 	    Force[] Forces = ReactionForces.Concat(ExternalForces).ToArray();
 	    Moment[] Moments = ReactionMoments.Concat(ExternalMoments).ToArray();
 	    int dimensions = 3;
@@ -78,7 +94,7 @@ namespace TMISolver{
 		Balance[i] = this.AssembleForceEquation(i);
 		Balance[i+dimensions] = this.AssembleMomentEquation(i, Reference);
 	    }
-	    return Balance.ToList();
+	    return Balance;
 	}
     }
 }

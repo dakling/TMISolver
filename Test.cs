@@ -33,10 +33,8 @@ namespace TMISolver {
 	    var BalkenExercise = new ReactionForceExercise2D(ReactionForces, ReactionMoments, ExternalForces, ExternalMoments, Unknowns);
 	    var Balances = BalkenExercise.AssembleEquations(A);
 	    var Sol = BalkenExercise.SolveBalanceEquations();
-	    Console.WriteLine(Balances);
-	    foreach (var item in Sol) {
-	    	Console.WriteLine(item);
-	    }
+	    BalkenExercise.PrintEquations(A);
+	    BalkenExercise.PrintSolution();
 	}
 	public static void GelenkBalkenSystem(){
 	    Console.WriteLine("Balken mit Gelenk");
@@ -72,11 +70,7 @@ namespace TMISolver {
 
 	    var BalanceEquationsFull = (FullSystem.AssembleEquations(A));
 	    Console.WriteLine("Gesamtsystem");
-	    foreach (var item in BalanceEquationsFull)
-	    {
-		var eq = new And(item);
-		Console.WriteLine(eq);
-	    }
+	    FullSystem.PrintEquationsLatex(A);
 	    // Right Subsystem
 	    var ReactionForcesRight = new Force[]{F_G, F_B};
 	    var ExternalForcesRight = new Force[]{F_Ext};
@@ -85,22 +79,15 @@ namespace TMISolver {
 	    var RightSystem = new Subsystem2D(ReactionForcesRight, ReactionMomentsRight, ExternalForcesRight, ExternalMomentsRight);
 	    Console.WriteLine("Rechtes Teilsystem");
 	    var BalanceEquationsRight = (RightSystem.AssembleEquations(C));
-	    foreach (var item in BalanceEquationsRight)
-	    {
-		var eq = new And(item);
-		Console.WriteLine(eq);
-	    }
+	    RightSystem.PrintEquations(C);
 
 	    // Everything together
 	    var Unknowns = new Symbol[]{Ax, Ay, Ma, By, Gx, Gy};
 	    var Exercise = new ReactionForceExercise2D(new Subsystem2D[]{FullSystem, RightSystem}, Unknowns);
 
 	    Console.WriteLine("Alles zusammen");
-	    Console.WriteLine(Exercise.AssembleEquations(A));
 	    var Sol = Exercise.SolveBalanceEquations();
-	    foreach (var item in Sol) {
-		Console.WriteLine(item);
-	    }
+	    Exercise.PrintSolution();
 	}
     }
 }

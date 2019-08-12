@@ -10,21 +10,20 @@ namespace TMISolver{
     public abstract class ReactionForceExercise{
 	protected Symbol[] AllUnknowns;
 	public Subsystem[] Subsystems;
-	public And AssembleEquations(Point Reference) {
+	public Equation[] AssembleEquations(Point Reference) {
 	    List<Equation> BalanceEquations = new List<Equation>();
 	    foreach (var Subsystem in this.Subsystems)
 	    {
 		BalanceEquations.AddRange(Subsystem.AssembleEquations(Reference));
 	    }
-	    return new And(BalanceEquations.ToArray());
+	    return BalanceEquations.ToArray();
 	}
     	public MathObject[] SolveBalanceEquations()
     	{
 	    var Origin = new Point(0,0,0);
-	    var BalanceEquations = this.AssembleEquations(Origin);
+	    var BalanceEquations = new And(this.AssembleEquations(Origin));
 	    List<MathObject> Solution = new List<MathObject>();
-	    foreach (Symbol Unknown in this.AllUnknowns)
-	    {
+	    foreach (Symbol Unknown in this.AllUnknowns) {
 		Symbol[] VariablesToEliminate = Extensions.AllBut(AllUnknowns, Unknown);
 		Solution.Add(
 					   BalanceEquations
@@ -34,6 +33,22 @@ namespace TMISolver{
 	    }
     	    return Solution.ToArray();
     	}
+	public void PrintEquations(Point Reference){
+	    foreach (var Subsystem in this.Subsystems)
+	    {
+		Subsystem.PrintEquations(Reference);
+	    }
+	}
+	public void PrintEquationsLatex(Point Reference){
+	    foreach (var Subsystem in this.Subsystems)
+	    {
+		Subsystem.PrintEquationsLatex(Reference);
+	    }
+	}
+	public void PrintSolution(){
+	    var Solutions = this.SolveBalanceEquations();
+	    Extensions.PrintArray(Solutions);
+	}
     }
     public class ReactionForceExercise2D : ReactionForceExercise{
 	public ReactionForceExercise2D(Subsystem2D[] _Subsystems, Symbol[] _AllUnknowns){

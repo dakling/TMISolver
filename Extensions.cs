@@ -25,6 +25,12 @@ namespace TMISolver {
 	public static Symbol[] AllBut(Symbol[] Array, Symbol Element){
 	    return Array.Where(val => val != Element).ToArray();
 	}
+	public static void PrintArray<T>(T[] Array){
+	    foreach (var elem in Array)
+	    {
+		Console.WriteLine(elem);
+	    }
+	}
     }
 }
     
